@@ -27,3 +27,13 @@ C:\IT project\BakeryAPI\BakeryAPI\obj\Debug\net5.0\BakeryAPI.dll
 C:\IT project\BakeryAPI\BakeryAPI\obj\Debug\net5.0\ref\BakeryAPI.dll
 C:\IT project\BakeryAPI\BakeryAPI\obj\Debug\net5.0\BakeryAPI.pdb
 C:\IT project\BakeryAPI\BakeryAPI\obj\Debug\net5.0\BakeryAPI.genruntimeconfig.cache
+C:\IT project\BakeryAPI\BakeryAPI\bin\Debug\net5.0\Microsoft.Data.Sqlite.dll
+C:\IT project\BakeryAPI\BakeryAPI\bin\Debug\net5.0\Microsoft.DotNet.PlatformAbstractions.dll
+C:\IT project\BakeryAPI\BakeryAPI\bin\Debug\net5.0\Microsoft.EntityFrameworkCore.dll
+C:\IT project\BakeryAPI\BakeryAPI\bin\Debug\net5.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\IT project\BakeryAPI\BakeryAPI\bin\Debug\net5.0\Microsoft.EntityFrameworkCore.Relational.dll
+C:\IT project\BakeryAPI\BakeryAPI\bin\Debug\net5.0\Microsoft.EntityFrameworkCore.Sqlite.dll
+C:\IT project\BakeryAPI\BakeryAPI\bin\Debug\net5.0\Microsoft.Extensions.DependencyInjection.dll
+C:\IT project\BakeryAPI\BakeryAPI\bin\Debug\net5.0\Microsoft.Extensions.DependencyModel.dll
+C:\IT project\BakeryAPI\BakeryAPI\bin\Debug\net5.0\SQLitePCLRaw.core.dll
+C:\IT project\BakeryAPI\BakeryAPI\bin\Debug\net5.0\System.Diagnostics.DiagnosticSource.dll
