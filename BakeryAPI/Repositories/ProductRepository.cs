@@ -52,6 +52,11 @@ namespace BakeryAPI.Repositories
             return await _context.Products.FindAsync(id);
         }
 
+        public Task<IEnumerable<Product>> Get(ProductFilterType filterType, bool descending) //work in progress
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task Update(int id, ProductVM product)
         {
             var _product = await _context.Products.FindAsync(id);
