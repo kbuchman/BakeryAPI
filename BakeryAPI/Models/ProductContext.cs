@@ -11,7 +11,7 @@ namespace BakeryAPI.Models
         public ProductContext(DbContextOptions<ProductContext> options)
             : base(options)
         {
-
+            Database.EnsureCreated();
         }
 
         public DbSet<Product> Products { get; set; }

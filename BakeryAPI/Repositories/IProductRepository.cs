@@ -1,4 +1,5 @@
 ﻿using BakeryAPI.Models;
+using BakeryAPI.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +11,8 @@ namespace BakeryAPI.Repositories
     {
         Task<IEnumerable<Product>> Get();
         Task<Product> Get(int id);
-        Task<Product> Create(Product product);
-        Task Update(Product product);
+        Task<Product> Create(ProductVM product);
+        Task Update(int id, ProductVM product);
         Task Delete(int id);
     }
 }

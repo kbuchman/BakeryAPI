@@ -1,4 +1,5 @@
 ﻿using BakeryAPI.Models;
+using BakeryAPI.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,12 +17,22 @@ namespace BakeryAPI.Repositories
             _context = context;
         }
 
-        public async Task<Product> Create(Product product)
+        public async Task<Product> Create(ProductVM product)
         {
-            _context.Products.Add(product);
+            var _product = new Product()
+            {
+                Name = product.Name,
+                Type = product.Type,
+                Description = product.Description,
+                Price = product.Price,
+                Quantity = product.Quantity,
+                DateAdded = DateTime.Now
+            };
+
+            _context.Products.Add(_product);
             await _context.SaveChangesAsync();
 
-            return product;
+            return _product;
         }
 
         public async Task Delete(int id)
@@ -41,10 +52,21 @@ namespace BakeryAPI.Repositories
             return await _context.Products.FindAsync(id);
         }
 
-        public async Task Update(Product product)
+        public async Task Update(int id, ProductVM product)
         {
-            _context.Entry(product).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            var _product = await _context.Products.FindAsync(id);
+
+            if (_product != null)
+            {
+                _product.Name = product.Name;
+                _product.Type = product.Type;
+                _product.Description = product.Description;
+                _product.Price = product.Price;
+                _product.Quantity = product.Quantity;
+                _product.DateModefied = DateTime.Now;
+
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }
