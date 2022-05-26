@@ -21,19 +21,19 @@ namespace BakeryAPI.Controllers
             _productRepository = productRepository;
         }
 
-        [HttpGet]
+        [HttpGet("get-all")]
         public async Task<IEnumerable<Product>> GetProducts()
         {
             return await _productRepository.Get();
         }
         
-        [HttpGet("{id}")]
+        [HttpGet("get/{id}")]
         public async Task<Product> GetProduct(int id)
         {
             return await _productRepository.Get(id);
         }
 
-        [HttpPost]
+        [HttpPost("add")]
         public async Task<ActionResult<Product>> CreateProduct([FromBody] ProductVM product)
         {
             var _product = await _productRepository.Create(product);
@@ -41,7 +41,7 @@ namespace BakeryAPI.Controllers
             return CreatedAtAction(nameof(GetProduct), new { id = _product.Id }, _product);
         }
 
-        [HttpPut]
+        [HttpPut("replace/{id}")]
         public async Task<ActionResult> UpdateProduct(int id, [FromBody] ProductVM product)
         {
             if (GetProduct(id) == null)
@@ -53,7 +53,7 @@ namespace BakeryAPI.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<ActionResult> DeleteProduct(int id)
         {
             if (GetProduct(id) == null)
