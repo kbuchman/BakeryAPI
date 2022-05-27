@@ -9,10 +9,10 @@ namespace BakeryAPI.Repositories
 {
     public enum ProductFilterType
     {
-        name,
-        type,
-        price,
-        quantity
+        Name,
+        Type,
+        Price,
+        Quantity
     }
 
     public interface IProductRepository

@@ -33,10 +33,10 @@ namespace BakeryAPI.Controllers
             return await _productRepository.Get(id);
         }
 
-        [HttpGet("get-all-sorted/{filterType}/{descendingOrder})")]
+        [HttpGet("get-all-sorted/{filterType}/{descendingOrder}")]
         public async Task<IEnumerable<Product>> GetProductsSorted(ProductFilterType filterType, bool descendingOrder)
         {
-            return await _productRepository.Get(filterType, true);  //something not right
+            return await _productRepository.Get(filterType, descendingOrder);  //something not right
         }
 
         [HttpPost("add")]

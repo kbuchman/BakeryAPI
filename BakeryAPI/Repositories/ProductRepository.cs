@@ -54,17 +54,47 @@ namespace BakeryAPI.Repositories
 
         public async Task<IEnumerable<Product>> Get(ProductFilterType filterType, bool descendingOrder) //work in progress
         {
-            var _products = await _context.Products.OrderByDescending(x => filterType).ToListAsync();
-
-            if (!descendingOrder)
+            if (descendingOrder && filterType == ProductFilterType.Name)
             {
-                return _products.OrderBy(x => filterType);
+                return await _context.Products.OrderByDescending(x => x.Name).ToListAsync();
             }
-            return _products;
+            else if (descendingOrder && filterType == ProductFilterType.Price)
+            {
+                return await _context.Products.OrderByDescending(x => x.Price).ToListAsync();
+            }
+            else if (descendingOrder && filterType == ProductFilterType.Quantity)
+            {
+                return await _context.Products.OrderByDescending(x => x.Quantity).ToListAsync();
+            }
+            else if (descendingOrder && filterType == ProductFilterType.Type)
+            {
+                return await _context.Products.OrderByDescending(x => x.Type).ToListAsync();
+            }
+            else if (!descendingOrder && filterType == ProductFilterType.Name)
+            {
+                return await _context.Products.OrderBy(x => x.Name).ToListAsync();
+            }
+            else if (!descendingOrder && filterType == ProductFilterType.Price)
+            {
+                return await _context.Products.OrderBy(x => x.Price).ToListAsync();
+            }
+            else if (!descendingOrder && filterType == ProductFilterType.Quantity)
+            {
+                return await _context.Products.OrderBy(x => x.Quantity).ToListAsync();
+            }
+            else if (!descendingOrder && filterType == ProductFilterType.Type)
+            {
+                return await _context.Products.OrderBy(x => x.Type).ToListAsync();
+            }
+            else
+            {
+                return null;
+            }
+
         }
 
         public async Task Update(int id, ProductVM product)
-        {
+        { 
             var _product = await _context.Products.FindAsync(id);
 
             if (_product != null)
