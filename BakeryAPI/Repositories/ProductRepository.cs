@@ -52,9 +52,15 @@ namespace BakeryAPI.Repositories
             return await _context.Products.FindAsync(id);
         }
 
-        public Task<IEnumerable<Product>> Get(ProductFilterType filterType, bool descending) //work in progress
+        public async Task<IEnumerable<Product>> Get(ProductFilterType filterType, bool descendingOrder) //work in progress
         {
-            throw new NotImplementedException();
+            var _products = await _context.Products.OrderByDescending(x => filterType).ToListAsync();
+
+            if (!descendingOrder)
+            {
+                return _products.OrderBy(x => filterType);
+            }
+            return _products;
         }
 
         public async Task Update(int id, ProductVM product)

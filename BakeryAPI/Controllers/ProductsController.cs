@@ -33,9 +33,15 @@ namespace BakeryAPI.Controllers
             return await _productRepository.Get(id);
         }
 
+        [HttpGet("get-all-sorted/{filterType}/{descendingOrder})")]
+        public async Task<IEnumerable<Product>> GetProductsSorted(ProductFilterType filterType, bool descendingOrder)
+        {
+            return await _productRepository.Get(filterType, true);  //something not right
+        }
+
         [HttpPost("add")]
         public async Task<ActionResult<Product>> CreateProduct([FromBody] ProductVM product)
-        {
+        { 
             var _product = await _productRepository.Create(product);
 
             return CreatedAtAction(nameof(GetProduct), new { id = _product.Id }, _product);
