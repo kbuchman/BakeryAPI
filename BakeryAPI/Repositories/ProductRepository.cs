@@ -52,7 +52,7 @@ namespace BakeryAPI.Repositories
             return await _context.Products.FindAsync(id);
         }
 
-        public async Task<IEnumerable<Product>> Get(ProductFilterType filterType, bool descendingOrder) //work in progress
+        public async Task<IEnumerable<Product>> Get(ProductFilterType filterType, bool descendingOrder) 
         {
             if (descendingOrder && filterType == ProductFilterType.Name)
             {
@@ -91,6 +91,17 @@ namespace BakeryAPI.Repositories
                 return null;
             }
 
+        }
+
+        public async Task<IEnumerable<Product>> Get(string phrase)
+        {
+            var _products = await _context.Products.Where( //only numbers working. No idea why
+                x => /*x.Name.ToLower().Contains(phrase.ToLower())
+                || x.Type.ToLower().Contains(phrase.ToLower())
+                || x.Description.ToLower().Contains(phrase.ToLower())
+                ||*/ x.Price == Int32.Parse(phrase)
+                || x.Quantity == Int32.Parse(phrase)).ToListAsync();
+            return _products;
         }
 
         public async Task Update(int id, ProductVM product)
