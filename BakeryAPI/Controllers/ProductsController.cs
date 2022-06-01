@@ -21,30 +21,43 @@ namespace BakeryAPI.Controllers
             _productRepository = productRepository;
         }
 
-        [HttpGet]
-        public async Task<IEnumerable<Product>> GetProducts()
+        [HttpGet("get-all")]
+        public async Task<IEnumerable<Product>> Get()
         {
             return await _productRepository.Get();
         }
         
-        [HttpGet("{id}")]
-        public async Task<Product> GetProduct(int id)
+        [HttpGet("get/{id}")]
+        public async Task<Product> Get(int id)
         {
             return await _productRepository.Get(id);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Product>> CreateProduct([FromBody] ProductVM product)
+        [HttpGet("get-all-sorted/{filterType}/{descendingOrder}")]
+        public async Task<IEnumerable<Product>> Get(ProductFilterType filterType, bool descendingOrder)
         {
-            var _product = await _productRepository.Create(product);
-
-            return CreatedAtAction(nameof(GetProduct), new { id = _product.Id }, _product);
+            return await _productRepository.Get(filterType, descendingOrder); 
         }
 
-        [HttpPut]
-        public async Task<ActionResult> UpdateProduct(int id, [FromBody] ProductVM product)
+        [HttpGet("get-any-with/{phrase}")]
+        public async Task<IEnumerable<Product>> Get(string phrase)
         {
-            if (GetProduct(id) == null)
+            return await _productRepository.Get(phrase);  
+        }
+
+
+        [HttpPost("add")]
+        public async Task<ActionResult<Product>> Create([FromBody] ProductVM product)
+        { 
+            var _product = await _productRepository.Create(product);
+
+            return CreatedAtAction(nameof(Get), new { id = _product.Id }, _product);
+        }
+
+        [HttpPut("replace/{id}")]
+        public async Task<ActionResult> Update(int id, [FromBody] ProductVM product)
+        {
+            if (Get(id) == null)
             {
                 return NotFound();
             }
@@ -53,10 +66,10 @@ namespace BakeryAPI.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteProduct(int id)
+        [HttpDelete("delete/{id}")]
+        public async Task<ActionResult> Delete(int id)
         {
-            if (GetProduct(id) == null)
+            if (Get(id) == null)
             {
                 return NotFound();
             }

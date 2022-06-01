@@ -9,17 +9,18 @@ namespace BakeryAPI.Repositories
 {
     public enum ProductFilterType
     {
-        name,
-        type,
-        price,
-        quantity
+        Name,
+        Type,
+        Price,
+        Quantity
     }
 
     public interface IProductRepository
     {
         Task<IEnumerable<Product>> Get(); //get all products
         Task<Product> Get(int id); //get product by id
-        Task<IEnumerable<Product>> Get(ProductFilterType filterType, bool descending);  //get products with filter and sorting (while true sort in descending order)
+        Task<IEnumerable<Product>> Get(ProductFilterType filterType, bool descendingOrder); //get products sorted by filter (while bool variable true sort in descending order)
+        Task<IEnumerable<Product>> Get(string phrase); //get all products containing phrase
         Task<Product> Create(ProductVM product);
         Task Update(int id, ProductVM product);
         Task Delete(int id);

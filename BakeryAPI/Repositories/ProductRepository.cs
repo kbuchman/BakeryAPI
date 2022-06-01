@@ -52,13 +52,60 @@ namespace BakeryAPI.Repositories
             return await _context.Products.FindAsync(id);
         }
 
-        public Task<IEnumerable<Product>> Get(ProductFilterType filterType, bool descending) //work in progress
+        public async Task<IEnumerable<Product>> Get(ProductFilterType filterType, bool descendingOrder) 
         {
-            throw new NotImplementedException();
+            if (descendingOrder && filterType == ProductFilterType.Name)
+            {
+                return await _context.Products.OrderByDescending(x => x.Name).ToListAsync();
+            }
+            else if (descendingOrder && filterType == ProductFilterType.Price)
+            {
+                return await _context.Products.OrderByDescending(x => x.Price).ToListAsync();
+            }
+            else if (descendingOrder && filterType == ProductFilterType.Quantity)
+            {
+                return await _context.Products.OrderByDescending(x => x.Quantity).ToListAsync();
+            }
+            else if (descendingOrder && filterType == ProductFilterType.Type)
+            {
+                return await _context.Products.OrderByDescending(x => x.Type).ToListAsync();
+            }
+            else if (!descendingOrder && filterType == ProductFilterType.Name)
+            {
+                return await _context.Products.OrderBy(x => x.Name).ToListAsync();
+            }
+            else if (!descendingOrder && filterType == ProductFilterType.Price)
+            {
+                return await _context.Products.OrderBy(x => x.Price).ToListAsync();
+            }
+            else if (!descendingOrder && filterType == ProductFilterType.Quantity)
+            {
+                return await _context.Products.OrderBy(x => x.Quantity).ToListAsync();
+            }
+            else if (!descendingOrder && filterType == ProductFilterType.Type)
+            {
+                return await _context.Products.OrderBy(x => x.Type).ToListAsync();
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+
+        public async Task<IEnumerable<Product>> Get(string phrase)
+        {
+            var _products = await _context.Products.Where( //only numbers working. No idea why
+                x => /*x.Name.ToLower().Contains(phrase.ToLower())
+                || x.Type.ToLower().Contains(phrase.ToLower())
+                || x.Description.ToLower().Contains(phrase.ToLower())
+                ||*/ x.Price == Int32.Parse(phrase)
+                || x.Quantity == Int32.Parse(phrase)).ToListAsync();
+            return _products;
         }
 
         public async Task Update(int id, ProductVM product)
-        {
+        { 
             var _product = await _context.Products.FindAsync(id);
 
             if (_product != null)
