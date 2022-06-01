@@ -10,9 +10,9 @@ namespace BakeryAPI.Repositories
 {
     public class ProductRepository : IProductRepository
     {
-        private readonly ProductContext _context;
+        private readonly BakeryContext _context;
 
-        public ProductRepository(ProductContext context)
+        public ProductRepository(BakeryContext context)
         {
             _context = context;
         }

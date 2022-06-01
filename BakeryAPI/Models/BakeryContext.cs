@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace BakeryAPI.Models
 {
-    public class ProductContext : DbContext 
+    public class BakeryContext : DbContext 
     {
-        public ProductContext(DbContextOptions<ProductContext> options)
+        public BakeryContext(DbContextOptions<BakeryContext> options)
             : base(options)
         {
             Database.EnsureCreated();

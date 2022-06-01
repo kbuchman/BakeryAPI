@@ -30,7 +30,7 @@ namespace BakeryAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IProductRepository, ProductRepository>();
-            services.AddDbContext<ProductContext>(x => x.UseSqlite("Data source=products.db"));
+            services.AddDbContext<BakeryContext>(x => x.UseSqlite("Data source=products.db"));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
