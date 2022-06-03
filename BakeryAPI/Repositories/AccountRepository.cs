@@ -1,4 +1,5 @@
-﻿using BakeryAPI.Models;
+﻿using BakeryAPI.Exceptions;
+using BakeryAPI.Models;
 using BakeryAPI.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -36,6 +37,17 @@ namespace BakeryAPI.Repositories
             await _context.SaveChangesAsync();
 
             return _user;
+        }
+
+        public async Task<string> GenerateJwt(LoginUserVM user)
+        {
+            var _user = _context.Users.FirstOrDefault(x => x.Email == user.Email);
+
+            if (_user == null)
+            {
+                throw new BadRequestException("Invalid email or password.");
+            }
+
         }
     }
 }

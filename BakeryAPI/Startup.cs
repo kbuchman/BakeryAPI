@@ -1,3 +1,4 @@
+using BakeryAPI.Middleware;
 using BakeryAPI.Models;
 using BakeryAPI.Repositories;
 using BakeryAPI.Validators;
@@ -14,10 +15,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace BakeryAPI
@@ -34,13 +37,37 @@ namespace BakeryAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var authenticationSettings = new AuthenticationSettings();
+            Configuration.GetSection("Authentication").Bind(authenticationSettings);
+
+            services.AddAuthentication(option =>
+            {
+                option.DefaultAuthenticateScheme = "Bearer";
+                option.DefaultScheme = "Bearer";
+                option.DefaultChallengeScheme = "Bearer";
+            }).AddJwtBearer(conf => 
+            {
+                conf.RequireHttpsMetadata = false;
+                conf.SaveToken = true;
+                conf.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = authenticationSettings.JwtIssuer,
+                    ValidAudience = authenticationSettings.JwtIssuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey)),
+                };
+            });
+
+            services.AddScoped<ErrorHandlingMiddleware>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddScoped<IValidator<RegisterUserVM>, RegisterUserVMValidator>();
+
             services.AddControllers().AddFluentValidation();
+
             services.AddDbContext<BakeryContext>(x => x.UseSqlite("Data source=bakery.db"));
             services.AddScoped<BakerySeeder>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "BakeryAPI", Version = "v1" });
@@ -62,6 +89,9 @@ namespace BakeryAPI
 
             app.UseRouting();
 
+            app.UseMiddleware<ErrorHandlingMiddleware>();
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

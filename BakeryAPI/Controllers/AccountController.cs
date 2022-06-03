@@ -22,10 +22,16 @@ namespace BakeryAPI.Controllers
         }
 
         [HttpPut("register")]
-        public async Task<ActionResult<User>> Create([FromBody] RegisterUserVM user)
+        public async Task<ActionResult<User>> Register([FromBody] RegisterUserVM user)
         {
             var _user = await _accountRepository.Create(user);
             return _user;
+        }
+
+        [HttpPost("login")]
+        public ActionResult Login([FromBody] LoginUserVM user)
+        {
+            string token = _accountRepository.GenerateJwt(user);
         }
     }
 }
