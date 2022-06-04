@@ -57,6 +57,8 @@ namespace BakeryAPI
                 };
             });
 
+            services.AddSingleton(authenticationSettings);
+
             services.AddScoped<ErrorHandlingMiddleware>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();
