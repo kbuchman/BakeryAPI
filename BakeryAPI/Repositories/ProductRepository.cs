@@ -10,9 +10,9 @@ namespace BakeryAPI.Repositories
 {
     public class ProductRepository : IProductRepository
     {
-        private readonly ProductContext _context;
+        private readonly BakeryContext _context;
 
-        public ProductRepository(ProductContext context)
+        public ProductRepository(BakeryContext context)
         {
             _context = context;
         }
@@ -95,8 +95,8 @@ namespace BakeryAPI.Repositories
 
         public async Task<IEnumerable<Product>> Get(string phrase)
         {
-            var _products = await _context.Products.Where( //only numbers working. No idea why
-                x => /*x.Name.ToLower().Contains(phrase.ToLower())
+            var _products = await _context.Products.Where(x => //only numbers working. No idea why
+                /*x.Name.ToLower().Contains(phrase.ToLower())
                 || x.Type.ToLower().Contains(phrase.ToLower())
                 || x.Description.ToLower().Contains(phrase.ToLower())
                 ||*/ x.Price == Int32.Parse(phrase)

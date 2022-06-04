@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 
 namespace BakeryAPI.Models
 {
-    public class Administrator : User //work in progress
+    public class Role
     {
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }
