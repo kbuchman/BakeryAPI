@@ -27,14 +27,15 @@ namespace BakeryAPI.Repositories
             _authenticationSettings = authenticationSettings;
         }
 
-        public async Task<User> Create(RegisterUserVM user)
+        public async Task<User> Register(RegisterUserVM user)
         {
             var _user = new User()
             {
                 Name = user.Name,
                 Email = user.Email,
                 CreationDate = DateTime.Now,
-                RoleId = user.RoleId
+                RoleId = user.RoleId,
+                Role = _context.Roles.Find(user.RoleId)
             };
 
             var hashedPassword = _passwordHasher.HashPassword(_user, user.Password);
@@ -43,10 +44,25 @@ namespace BakeryAPI.Repositories
             _context.Users.Add(_user);
             await _context.SaveChangesAsync();
 
+            var newUser = await _context.Users.FirstOrDefaultAsync(x => x.Email == _user.Email);
+            if (newUser.CartId == null)
+            {
+                _context.Carts.Add(new Cart()
+                {
+                    ClientId = newUser.Id
+                });
+                await _context.SaveChangesAsync();
+                var newCart = await _context.Carts.FirstOrDefaultAsync(x => x.ClientId == newUser.Id);
+                _context.Users.Find(newUser.Id).CartId = newCart.Id;
+                _context.Users.Find(newUser.Id).Cart = _context.Carts.Find(newCart.Id);
+                await _context.SaveChangesAsync();
+            }
+            
+
             return _user;
         }
 
-        public async Task<string> GenerateJwt(LoginUserVM user)
+        public async Task<string> Login(LoginUserVM user)
         {
             var _user = await _context.Users
                 .Include(u => u.Role)

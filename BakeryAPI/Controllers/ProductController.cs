@@ -13,18 +13,18 @@ namespace BakeryAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
-    public class ProductsController : ControllerBase
+    //[Authorize]
+    public class ProductController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
 
-        public ProductsController(IProductRepository productRepository)
+        public ProductController(IProductRepository productRepository)
         {
             _productRepository = productRepository;
         }
 
         [HttpGet("get-all")]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public async Task<IEnumerable<Product>> Get()
         {
             return await _productRepository.Get();
@@ -50,7 +50,7 @@ namespace BakeryAPI.Controllers
 
 
         [HttpPost("add")]
-        [Authorize(Roles = "Administrator")]
+        //[Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Product>> Create([FromBody] ProductVM product)
         { 
             var _product = await _productRepository.Create(product);
@@ -59,7 +59,7 @@ namespace BakeryAPI.Controllers
         }
 
         [HttpPut("replace/{id}")]
-        [Authorize(Roles = "Administrator")]
+        //[Authorize(Roles = "Administrator")]
         public async Task<ActionResult> Update(int id, [FromBody] ProductVM product)
         {
             if (Get(id) == null)
@@ -72,7 +72,7 @@ namespace BakeryAPI.Controllers
         }
 
         [HttpDelete("delete/{id}")]
-        [Authorize(Roles = "Administrator")]
+        //[Authorize(Roles = "Administrator")]
         public async Task<ActionResult> Delete(int id)
         {
             if (Get(id) == null)

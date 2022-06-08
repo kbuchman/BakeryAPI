@@ -9,6 +9,6 @@ namespace BakeryAPI.Models
     {
         public int Id { get; set; }
         public int ClientId { get; set; }
-        public List<Product> Products { get; set; }
+        public List<Product> Products { get; set; } = new List<Product>() { };
     }
 }

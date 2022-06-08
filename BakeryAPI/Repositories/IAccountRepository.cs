@@ -9,7 +9,7 @@ namespace BakeryAPI.Repositories
 {
     public interface IAccountRepository
     {
-        Task<User> Create(RegisterUserVM user);
-        Task<string> GenerateJwt(LoginUserVM user);
+        Task<User> Register(RegisterUserVM user);
+        Task<string> Login(LoginUserVM user);
     }
 }
