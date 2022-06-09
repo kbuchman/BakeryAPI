@@ -14,6 +14,18 @@ namespace BakeryAPI.Models
             Database.EnsureCreated();
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>()
+                .HasOne(b => b.Cart)
+                .WithOne(i => i.User)
+                .HasForeignKey<Cart>(b => b.UserId);
+
+            modelBuilder.Entity<Cart>()
+                .HasMany(x => x.Products)
+                .WithOne();
+        }
+
         public DbSet<Product> Products { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }

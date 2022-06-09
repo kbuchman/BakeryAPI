@@ -24,7 +24,7 @@ namespace BakeryAPI.Controllers
         [HttpPut("register")]
         public async Task<ActionResult> Register([FromBody] RegisterUserVM user)
         {
-            var _user = await _accountRepository.Register(user);
+            await _accountRepository.Register(user);
             return Ok();
         }
 

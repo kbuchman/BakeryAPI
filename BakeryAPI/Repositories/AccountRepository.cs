@@ -33,7 +33,7 @@ namespace BakeryAPI.Repositories
             {
                 Name = user.Name,
                 Email = user.Email,
-                CreationDate = DateTime.Now,
+                DateAdded = DateTime.Now,
                 RoleId = user.RoleId,
                 Role = _context.Roles.Find(user.RoleId)
             };
@@ -49,10 +49,10 @@ namespace BakeryAPI.Repositories
             {
                 _context.Carts.Add(new Cart()
                 {
-                    ClientId = newUser.Id
+                    UserId = newUser.Id
                 });
                 await _context.SaveChangesAsync();
-                var newCart = await _context.Carts.FirstOrDefaultAsync(x => x.ClientId == newUser.Id);
+                var newCart = await _context.Carts.FirstOrDefaultAsync(x => x.UserId == newUser.Id);
                 _context.Users.Find(newUser.Id).CartId = newCart.Id;
                 _context.Users.Find(newUser.Id).Cart = _context.Carts.Find(newCart.Id);
                 await _context.SaveChangesAsync();

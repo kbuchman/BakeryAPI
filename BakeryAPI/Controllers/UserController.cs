@@ -1,5 +1,6 @@
 ﻿using BakeryAPI.Models;
 using BakeryAPI.Repositories;
+using BakeryAPI.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -21,7 +22,7 @@ namespace BakeryAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<User>> Get()
+        public async Task<IEnumerable<UserVM>> Get()
         {
             return await _userRepository.Get();
         }
