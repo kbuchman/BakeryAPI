@@ -12,11 +12,13 @@ namespace BakeryAPI.Repositories
     {
         private readonly BakeryContext _context;
         private readonly IProductRepository _productRepository;
+        private readonly IAccountRepository _accountRepository;
 
-        public UserRepository(BakeryContext context, IProductRepository productRepository)
+        public UserRepository(BakeryContext context, IProductRepository productRepository, IAccountRepository accountRepository)
         {
             _context = context;
             _productRepository = productRepository;
+            _accountRepository = accountRepository;
         }
 
         public async Task<Product> AddProductToCart(int productId, int userId)
@@ -65,21 +67,25 @@ namespace BakeryAPI.Repositories
         {
             var _user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
 
-            var user = new UserVM()
+            if (_user != null)
             {
-                Id = _user.Id,
-                Name = _user.Name,
-                Email = _user.Email,
-                DateAdded = _user.DateAdded,
-                DateModified = _user.DateModified,
-                Role = _user.Role,
-                Cart = new CartVM()
+                var user = new UserVM()
                 {
-                    Id = _user.Cart.Id,
-                    Products = _user.Cart.Products
-                }
-            };
-            return user;
+                    Id = _user.Id,
+                    Name = _user.Name,
+                    Email = _user.Email,
+                    DateAdded = _user.DateAdded,
+                    DateModified = _user.DateModified,
+                    Role = _user.Role,
+                    Cart = new CartVM()
+                    {
+                        Id = _user.Cart.Id,
+                        Products = _user.Cart.Products
+                    }
+                };
+                return user;
+            }
+            return null;
         }
 
         public async Task<IEnumerable<UserVM>> Get(UserFilterType filterType, bool descendingOrder)
@@ -88,37 +94,76 @@ namespace BakeryAPI.Repositories
 
             if (descendingOrder && filterType == UserFilterType.Name)
             {
-                users.OrderByDescending(x => x.Name);
+                return users.OrderByDescending(x => x.Name);
             }
             else if (!descendingOrder && filterType == UserFilterType.Name)
             {
-                users.OrderBy(x => x.Name);
+                return users.OrderBy(x => x.Name);
             }
             else if (descendingOrder && filterType == UserFilterType.Role)
             {
-                users.OrderByDescending(x => x.Role);
+                return users.OrderByDescending(x => x.Role);
             }
             else if (!descendingOrder && filterType == UserFilterType.Role)
             {
-                users.OrderBy(x => x.Role);
+                return users.OrderBy(x => x.Role);
             }
 
             return users;
         }
 
-        public async Task<IEnumerable<User>> Get(string name)
+        public async Task<IEnumerable<UserVM>> Get(string name)
         {
-            return await _context.Users.Select(x => x).Where(y => y.Name == name).ToListAsync();
+            var _users = await _context.Users
+                .Select(x => x)
+                .Where(y => y.Name == name)
+                .ToListAsync();
+
+            var users = _users.Select(x => new UserVM()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Email = x.Email,
+                DateAdded = x.DateAdded,
+                DateModified = x.DateModified,
+                Role = x.Role,
+                Cart = new CartVM()
+                {
+                    Id = x.Cart.Id,
+                    Products = x.Cart.Products
+                }
+            });
+
+            return users;
         }
 
-        public Task Update(int id, UserVM user)
+        public async Task<UserVM> Update(int id, RegisterUserVM user)
         {
-            throw new NotImplementedException();
+            var currentUser = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (currentUser != null)
+            {
+                var currentUserId = currentUser.Id;
+                var currentUserDateAdded = currentUser.DateAdded;
+                var currentUserCartId = currentUser.CartId;
+                var currentUserCart = currentUser.Cart;
+
+                await Delete(id);
+
+                await _accountRepository.Register(user);
+
+                var newUser = await _context.Users.FirstOrDefaultAsync(x => x.Email == user.Email);
+                newUser.Id = currentUserId;
+                newUser.DateAdded = currentUserDateAdded;
+                newUser.CartId = currentUserCartId;
+                newUser.Cart = currentUserCart;
+                newUser.DateModified = DateTime.Now;
+
+                await _context.SaveChangesAsync();
+            }
+
+            return await Get(id);
         }
 
-        Task<User> IUserRepository.Get(int id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

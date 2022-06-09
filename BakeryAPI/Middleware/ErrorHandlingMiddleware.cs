@@ -23,6 +23,11 @@ namespace BakeryAPI.Middleware
             {
                 await next.Invoke(context);
             }
+            catch (NullReferenceException e)
+            {
+                context.Response.StatusCode = 500;
+                await context.Response.WriteAsync(e.Message);
+            }
             catch (BadRequestException e)
             {
                 context.Response.StatusCode = 400;

@@ -58,7 +58,7 @@ namespace BakeryAPI.Controllers
             return CreatedAtAction(nameof(Get), new { id = _product.Id }, _product);
         }
 
-        [HttpPut("replace/{id}")]
+        [HttpPut("update/{id}")]
         //[Authorize(Roles = "Administrator")]
         public async Task<ActionResult> Update(int id, [FromBody] ProductVM product)
         {

@@ -21,16 +21,52 @@ namespace BakeryAPI.Controllers
             _userRepository = userRepository;
         }
 
-        [HttpGet]
+        [HttpGet("get-all")]
         public async Task<IEnumerable<UserVM>> Get()
         {
             return await _userRepository.Get();
         }
 
-        [HttpPost("add-product-to-cart/{pId}/{uId}")]
-        public async Task<Product> AddProductToCart(int pId, int uId)
+        [HttpGet("get/{id}")]
+        public async Task<UserVM> Get(int id)
         {
-            return await _userRepository.AddProductToCart(pId, uId);
+            return await _userRepository.Get(id);
+        }
+
+        [HttpGet("get-all-sorted/{filterType}/{descending-order}")]
+        public async Task<IEnumerable<UserVM>> Get(UserFilterType filterType, bool descendingOrder)
+        {
+            return await _userRepository.Get(filterType, descendingOrder);
+        }
+
+        [HttpGet("get-by-name/{name}")]
+        public async Task<IEnumerable<UserVM>> Get(string name)
+        {
+            return await _userRepository.Get(name);
+        }
+
+        [HttpDelete("delete")]
+        public async Task Delete()
+        {
+            await _userRepository.Delete();
+        }
+
+        [HttpDelete("delete/{id}")]
+        public async Task Delete(int id)
+        {
+            await _userRepository.Delete(id);
+        }
+
+        [HttpPut("update/{id}")]
+        public async Task<UserVM> Update(int id, [FromBody] RegisterUserVM user)
+        {
+            return await _userRepository.Update(id, user);
+        }
+
+        [HttpPost("add-product-to-cart/{productId}/{userId}")] //something not rigth
+        public async Task<Product> AddProductToCart(int productId, int userId)
+        {
+            return await _userRepository.AddProductToCart(productId, userId);
         }
         
     }

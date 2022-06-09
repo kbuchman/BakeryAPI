@@ -16,11 +16,11 @@ namespace BakeryAPI.Repositories
     public interface IUserRepository
     {
         Task<IEnumerable<UserVM>> Get();
-        Task<User> Get(int id);
+        Task<UserVM> Get(int id);
         Task<IEnumerable<UserVM>> Get(UserFilterType filterType, bool descendingOrder);
-        Task<IEnumerable<User>> Get(string name);
+        Task<IEnumerable<UserVM>> Get(string name);
         Task<Product> AddProductToCart(int productId, int userId);
-        Task Update(int id, UserVM user);
+        Task<UserVM> Update(int id, RegisterUserVM user);
         Task Delete();
         Task Delete(int id);
     }
