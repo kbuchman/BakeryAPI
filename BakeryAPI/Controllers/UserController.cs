@@ -1,6 +1,7 @@
 ﻿using BakeryAPI.Models;
 using BakeryAPI.Repositories;
 using BakeryAPI.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,6 +13,7 @@ namespace BakeryAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Administrator")]
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
@@ -28,6 +30,7 @@ namespace BakeryAPI.Controllers
         }
 
         [HttpGet("get/{id}")]
+        [Authorize(Roles = "Client")]
         public async Task<UserVM> Get(int id)
         {
             return await _userRepository.Get(id);
@@ -45,25 +48,41 @@ namespace BakeryAPI.Controllers
             return await _userRepository.Get(name);
         }
 
-        [HttpDelete("delete")]
-        public async Task Delete()
+        [HttpDelete("delete-all")]
+        public async Task<ActionResult> Delete()
         {
+            if (Get() == null)
+            {
+                return NotFound();
+            }
+
             await _userRepository.Delete();
+            return NoContent();
         }
 
         [HttpDelete("delete/{id}")]
-        public async Task Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
+            if (Get(id) == null)
+            {
+                return NotFound();
+            }
             await _userRepository.Delete(id);
+            return NoContent();
         }
 
         [HttpPut("update/{id}")]
-        public async Task<UserVM> Update(int id, [FromBody] UserRegisterVM user)
+        public async Task<ActionResult<UserVM>> Update(int id, [FromBody] UserRegisterVM user)
         {
+            if (Get(id) == null)
+            {
+                return NotFound();
+            }
             return await _userRepository.Update(id, user);
         }
 
-        [HttpPost("add-product-to-cart/{productId}/{userId}")] //something not rigth
+        [HttpPost("add-product-to-cart/{productId}/{userId}")]
+        [Authorize(Roles = "Client")]
         public async Task<Product> AddProductToCart(int productId, int userId)
         {
             return await _userRepository.AddProductToCart(productId, userId);

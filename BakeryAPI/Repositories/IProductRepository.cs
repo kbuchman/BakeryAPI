@@ -24,5 +24,6 @@ namespace BakeryAPI.Repositories
         Task<Product> Create(ProductVM product);
         Task Update(int id, ProductVM product);
         Task Delete(int id);
+        Task Delete();
     }
 }

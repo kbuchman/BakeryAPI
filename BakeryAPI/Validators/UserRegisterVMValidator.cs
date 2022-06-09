@@ -29,7 +29,9 @@ namespace BakeryAPI.Validators
 
             RuleFor(x => x.Password).MinimumLength(8);
 
-            RuleFor(x => x.ConfirmPassword).Equal(y => y.Password);
+            RuleFor(x => x.ConfirmPassword)
+                .Equal(y => y.Password)
+                .WithErrorCode("Passwords are not equal!");
         }
     }
 }
