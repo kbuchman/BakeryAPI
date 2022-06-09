@@ -96,10 +96,10 @@ namespace BakeryAPI.Repositories
         public async Task<IEnumerable<Product>> Get(string phrase)
         {
             var _products = await _context.Products.Where(x => //only numbers working. No idea why
-                /*x.Name.ToLower().Contains(phrase.ToLower())
-                || x.Type.ToLower().Contains(phrase.ToLower())
-                || x.Description.ToLower().Contains(phrase.ToLower())
-                ||*/ x.Price == Int32.Parse(phrase)
+                EF.Functions.Like(x.Name, "%" + phrase + "%")
+                || EF.Functions.Like(x.Type, "%" + phrase + "%")
+                || EF.Functions.Like(x.Description, "%" + phrase + "%")
+                || x.Price == Int32.Parse(phrase)
                 || x.Quantity == Int32.Parse(phrase)).ToListAsync();
             return _products;
         }

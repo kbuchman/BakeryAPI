@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace BakeryAPI.Validators
 {
-    public class RegisterUserVMValidator : AbstractValidator<RegisterUserVM>
+    public class UserRegisterVMValidator : AbstractValidator<UserRegisterVM>
     {
-        public RegisterUserVMValidator(BakeryContext context)
+        public UserRegisterVMValidator(BakeryContext context)
         {
             RuleFor(x => x.Email)
                 .NotEmpty()

@@ -33,7 +33,7 @@ namespace BakeryAPI.Controllers
             return await _userRepository.Get(id);
         }
 
-        [HttpGet("get-all-sorted/{filterType}/{descending-order}")]
+        [HttpGet("get-all-sorted/{filterType}/{descendingOrder}")]
         public async Task<IEnumerable<UserVM>> Get(UserFilterType filterType, bool descendingOrder)
         {
             return await _userRepository.Get(filterType, descendingOrder);
@@ -58,7 +58,7 @@ namespace BakeryAPI.Controllers
         }
 
         [HttpPut("update/{id}")]
-        public async Task<UserVM> Update(int id, [FromBody] RegisterUserVM user)
+        public async Task<UserVM> Update(int id, [FromBody] UserRegisterVM user)
         {
             return await _userRepository.Update(id, user);
         }

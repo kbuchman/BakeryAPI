@@ -24,22 +24,37 @@ namespace BakeryAPI.Repositories
         public async Task<Product> AddProductToCart(int productId, int userId)
         {
             var product = await _productRepository.Get(productId);
-            var user = await _context.Users.FindAsync(userId);
-            _context.Carts.Find(user.CartId).Products.Add(product);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+            _context.Carts
+                .Include(x => x.Products)
+                .FirstOrDefault(x => x.Id == user.CartId)
+                .Products.Add(product);
             await _context.SaveChangesAsync();
             return product;
         }
 
         public async Task Delete()
         {
-            _context.Users.RemoveRange(_context.Users);
+            var carts = await _context.Users
+                .Include(x => x.Cart)
+                .Select(y => y.Cart)
+                .ToListAsync();
+
+            _context.Users.RemoveRange(_context.Users.Include(x => x.Cart).Include(y => y.Cart.Products).Include(z => z.Role));
+            _context.Carts.RemoveRange(carts);
             await _context.SaveChangesAsync();
         }
 
         public async Task Delete(int id)
         {
-            var userToDelete = await _context.Users.FindAsync(id);
+            var userToDelete = await _context.Users
+                .Include(x => x.Cart)
+                .Include(y => y.Cart.Products)
+                .FirstOrDefaultAsync(z => z.Id == id);
+            var userToDeleteCart = userToDelete.Cart;
+
             _context.Users.Remove(userToDelete);
+            _context.Carts.Remove(userToDeleteCart);
             await _context.SaveChangesAsync();
         }
 
@@ -56,6 +71,7 @@ namespace BakeryAPI.Repositories
                 Cart = new CartVM()
                 {
                     Id = x.Cart.Id,
+                    UserId = x.Id,
                     Products = x.Cart.Products
                 }
             }).ToListAsync();
@@ -65,7 +81,11 @@ namespace BakeryAPI.Repositories
 
         public async Task<UserVM> Get(int id)
         {
-            var _user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            var _user = await _context.Users
+                .Include(x => x.Role)
+                .Include(y => y.Cart)
+                .Include(w => w.Cart.Products)
+                .FirstOrDefaultAsync(z => z.Id == id);
 
             if (_user != null)
             {
@@ -80,6 +100,7 @@ namespace BakeryAPI.Repositories
                     Cart = new CartVM()
                     {
                         Id = _user.Cart.Id,
+                        UserId = _user.Id,
                         Products = _user.Cart.Products
                     }
                 };
@@ -130,6 +151,7 @@ namespace BakeryAPI.Repositories
                 Cart = new CartVM()
                 {
                     Id = x.Cart.Id,
+                    UserId = x.Id,
                     Products = x.Cart.Products
                 }
             });
@@ -137,7 +159,7 @@ namespace BakeryAPI.Repositories
             return users;
         }
 
-        public async Task<UserVM> Update(int id, RegisterUserVM user)
+        public async Task<UserVM> Update(int id, UserRegisterVM user)
         {
             var currentUser = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
 

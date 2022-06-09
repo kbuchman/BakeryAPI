@@ -30,7 +30,9 @@ namespace BakeryAPI.Repositories
 
         public async Task<CartVM> Get(int id)
         {
-            var _cart = await _context.Carts.FindAsync(id);
+            var _cart = await _context.Carts
+                .Include(x => x.Products)
+                .FirstOrDefaultAsync(x => x.Id == id);
             if (_cart != null)
             {
                 var cart = new CartVM()

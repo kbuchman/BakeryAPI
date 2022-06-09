@@ -31,5 +31,6 @@ namespace BakeryAPI.Controllers
         {
             return await _cartRepository.Get(id);
         }
+    }
 }
  

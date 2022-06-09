@@ -27,7 +27,7 @@ namespace BakeryAPI.Repositories
             _authenticationSettings = authenticationSettings;
         }
 
-        public async Task<User> Register(RegisterUserVM user)
+        public async Task<User> Register(UserRegisterVM user)
         {
             var _user = new User()
             {
@@ -62,7 +62,7 @@ namespace BakeryAPI.Repositories
             return _user;
         }
 
-        public async Task<string> Login(LoginUserVM user)
+        public async Task<string> Login(UserLoginVM user)
         {
             var _user = await _context.Users
                 .Include(u => u.Role)

@@ -9,7 +9,7 @@ namespace BakeryAPI.Repositories
 {
     public interface IAccountRepository
     {
-        Task<User> Register(RegisterUserVM user);
-        Task<string> Login(LoginUserVM user);
+        Task<User> Register(UserRegisterVM user);
+        Task<string> Login(UserLoginVM user);
     }
 }

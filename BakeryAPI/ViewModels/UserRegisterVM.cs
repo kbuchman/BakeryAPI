@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace BakeryAPI.ViewModels
 {
-    public class RegisterUserVM
+    public class UserRegisterVM
     {
         public string Name { get; set; }
         public string Email { get; set; }
