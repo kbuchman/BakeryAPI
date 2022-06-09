@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace BakeryAPI.Repositories
 {
-    public interface IAccountRepository
+    public interface ICartRepository
     {
-        Task<User> Register(UserRegisterVM user);
-        Task<string> Login(UserLoginVM user);
+        Task<IEnumerable<CartVM>> Get();
+        Task<CartVM> Get(int id);
     }
 }

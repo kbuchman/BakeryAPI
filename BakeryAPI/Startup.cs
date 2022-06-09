@@ -60,10 +60,12 @@ namespace BakeryAPI
             services.AddSingleton(authenticationSettings);
 
             services.AddScoped<ErrorHandlingMiddleware>();
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<ICartRepository, CartRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-            services.AddScoped<IValidator<RegisterUserVM>, RegisterUserVMValidator>();
+            services.AddScoped<IValidator<UserRegisterVM>, UserRegisterVMValidator>();
 
             services.AddControllers().AddFluentValidation();
 
