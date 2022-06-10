@@ -1,5 +1,6 @@
 ﻿using BakeryAPI.Repositories;
 using BakeryAPI.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,6 +12,7 @@ namespace BakeryAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CartController : ControllerBase
     {
         private readonly ICartRepository _cartRepository;
@@ -21,12 +23,14 @@ namespace BakeryAPI.Controllers
         }
 
         [HttpGet("get-all")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IEnumerable<CartVM>> Get()
         {
             return await _cartRepository.Get();
         }
 
         [HttpGet("get/{id}")]
+        [Authorize(Roles = "Client,Administrator")]
         public async Task<CartVM> Get(int id)
         {
             return await _cartRepository.Get(id);

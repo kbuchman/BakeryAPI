@@ -13,7 +13,7 @@ namespace BakeryAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class ProductController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
@@ -24,7 +24,7 @@ namespace BakeryAPI.Controllers
         }
 
         [HttpGet("get-all")]
-        //[AllowAnonymous]
+        [AllowAnonymous]
         public async Task<IEnumerable<Product>> Get()
         {
             return await _productRepository.Get();
@@ -43,13 +43,14 @@ namespace BakeryAPI.Controllers
         }
 
         [HttpGet("get-any-with/{phrase}")]
+        [AllowAnonymous]
         public async Task<IEnumerable<Product>> Get(string phrase)
         {
             return await _productRepository.Get(phrase);  
         }
 
-
         [HttpPost("add")]
+        [AllowAnonymous]
         //[Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Product>> Create([FromBody] ProductVM product)
         { 
@@ -59,7 +60,7 @@ namespace BakeryAPI.Controllers
         }
 
         [HttpPut("update/{id}")]
-        //[Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult> Update(int id, [FromBody] ProductVM product)
         {
             if (Get(id) == null)
@@ -72,7 +73,7 @@ namespace BakeryAPI.Controllers
         }
 
         [HttpDelete("delete/{id}")]
-        //[Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult> Delete(int id)
         {
             if (Get(id) == null)
@@ -81,6 +82,19 @@ namespace BakeryAPI.Controllers
             }
 
             await _productRepository.Delete(id);
+            return NoContent();
+        }
+
+        [HttpDelete("delete-all")]
+        [Authorize(Roles = "Administrator")]
+        public async Task<ActionResult> Delete()
+        {
+            if (Get() == null)
+            {
+                return NotFound();
+            }
+
+            await _productRepository.Delete();
             return NoContent();
         }
     }

@@ -37,8 +37,14 @@ namespace BakeryAPI.Repositories
 
         public async Task Delete(int id)
         {
-            var productToDelete = await _context.Products.FindAsync(id);
+            var productToDelete = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
             _context.Products.Remove(productToDelete);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task Delete()
+        {
+            _context.Products.RemoveRange(_context.Products);
             await _context.SaveChangesAsync();
         }
 
@@ -49,7 +55,7 @@ namespace BakeryAPI.Repositories
 
         public async Task<Product> Get(int id)
         {
-            return await _context.Products.FindAsync(id);
+            return await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<IEnumerable<Product>> Get(ProductFilterType filterType, bool descendingOrder) 
@@ -95,18 +101,44 @@ namespace BakeryAPI.Repositories
 
         public async Task<IEnumerable<Product>> Get(string phrase)
         {
-            var _products = await _context.Products.Where(x => //only numbers working. No idea why
-                EF.Functions.Like(x.Name, "%" + phrase + "%")
-                || EF.Functions.Like(x.Type, "%" + phrase + "%")
-                || EF.Functions.Like(x.Description, "%" + phrase + "%")
-                || x.Price == Int32.Parse(phrase)
-                || x.Quantity == Int32.Parse(phrase)).ToListAsync();
+            string _phrase = "%" + phrase.ToLower() + "%";
+            var _products = await _context.Products.Where(x => 
+                EF.Functions.Like(x.Name.ToLower(), _phrase)
+                || EF.Functions.Like(x.Type.ToLower(), _phrase)
+                || EF.Functions.Like(x.Description.ToLower(), _phrase)
+                ).ToListAsync();
+
+            double phraseAsDouble;
+            int phraseAsInt;
+            
+            try
+            {
+                phraseAsDouble = Convert.ToDouble(phrase);
+                phraseAsInt = Convert.ToInt32(phrase);
+            }
+            catch (Exception)
+            {
+
+                return _products;
+            }
+
+            var _productsNum = await _context.Products.Where(x =>
+                x.Price == phraseAsDouble
+                || x.Quantity == phraseAsInt
+                ).ToListAsync();
+
+            var num = _productsNum
+                .Where(x => !_products.Any(y => y.Id == x.Id))
+                .ToList();
+
+            _products.AddRange(num);
+
             return _products;
         }
 
         public async Task Update(int id, ProductVM product)
         { 
-            var _product = await _context.Products.FindAsync(id);
+            var _product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
 
             if (_product != null)
             {

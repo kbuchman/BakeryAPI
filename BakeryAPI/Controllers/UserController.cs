@@ -1,6 +1,7 @@
 ﻿using BakeryAPI.Models;
 using BakeryAPI.Repositories;
 using BakeryAPI.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,6 +13,7 @@ namespace BakeryAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
@@ -22,6 +24,7 @@ namespace BakeryAPI.Controllers
         }
 
         [HttpGet("get-all")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IEnumerable<UserVM>> Get()
         {
             return await _userRepository.Get();
@@ -40,34 +43,58 @@ namespace BakeryAPI.Controllers
         }
 
         [HttpGet("get-by-name/{name}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IEnumerable<UserVM>> Get(string name)
         {
             return await _userRepository.Get(name);
         }
 
-        [HttpDelete("delete")]
-        public async Task Delete()
+        [HttpDelete("delete-all")]
+        [Authorize(Roles = "Administrator")]
+        public async Task<ActionResult> Delete()
         {
+            if (Get() == null)
+            {
+                return NotFound();
+            }
+
             await _userRepository.Delete();
+            return NoContent();
         }
 
         [HttpDelete("delete/{id}")]
-        public async Task Delete(int id)
+        [Authorize(Roles = "Administrator")]
+        public async Task<ActionResult> Delete(int id)
         {
+            if (Get(id) == null)
+            {
+                return NotFound();
+            }
             await _userRepository.Delete(id);
+            return NoContent();
         }
 
         [HttpPut("update/{id}")]
-        public async Task<UserVM> Update(int id, [FromBody] UserRegisterVM user)
+        [Authorize(Roles = "Administrator")]
+        public async Task<ActionResult<UserVM>> Update(int id, [FromBody] UserRegisterVM user)
         {
+            if (Get(id) == null)
+            {
+                return NotFound();
+            }
             return await _userRepository.Update(id, user);
         }
 
-        [HttpPost("add-product-to-cart/{productId}/{userId}")] //something not rigth
+        [HttpPost("add-product-to-cart/{productId}/{userId}")]]
         public async Task<Product> AddProductToCart(int productId, int userId)
         {
             return await _userRepository.AddProductToCart(productId, userId);
         }
-        
+
+        [HttpPut("remove-product-from-cart/{productId}/{userId}")]
+        public async Task RemoveProductFromCart(int productId, int userId)
+        {
+            await _userRepository.RemoveProductFromCart(productId, userId);
+        }
     }
 }

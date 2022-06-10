@@ -1,4 +1,5 @@
-﻿using BakeryAPI.Models;
+﻿using BakeryAPI.Exceptions;
+using BakeryAPI.Models;
 using BakeryAPI.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -111,32 +112,87 @@ namespace BakeryAPI.Repositories
 
         public async Task<IEnumerable<UserVM>> Get(UserFilterType filterType, bool descendingOrder)
         {
-            var users = await Get();
-
             if (descendingOrder && filterType == UserFilterType.Name)
             {
-                return users.OrderByDescending(x => x.Name);
+                return await _context.Users.Select(x => new UserVM()
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Email = x.Email,
+                    DateAdded = x.DateAdded,
+                    DateModified = x.DateModified,
+                    Role = x.Role,
+                    Cart = new CartVM()
+                    {
+                        Id = x.Cart.Id,
+                        UserId = x.Id,
+                        Products = x.Cart.Products
+                    }
+                }).OrderByDescending(x => x.Name).ToListAsync();
             }
             else if (!descendingOrder && filterType == UserFilterType.Name)
             {
-                return users.OrderBy(x => x.Name);
+                return await _context.Users.Select(x => new UserVM()
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Email = x.Email,
+                    DateAdded = x.DateAdded,
+                    DateModified = x.DateModified,
+                    Role = x.Role,
+                    Cart = new CartVM()
+                    {
+                        Id = x.Cart.Id,
+                        UserId = x.Id,
+                        Products = x.Cart.Products
+                    }
+                }).OrderBy(x => x.Name).ToListAsync();
             }
             else if (descendingOrder && filterType == UserFilterType.Role)
             {
-                return users.OrderByDescending(x => x.Role);
+                return await _context.Users.Select(x => new UserVM()
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Email = x.Email,
+                    DateAdded = x.DateAdded,
+                    DateModified = x.DateModified,
+                    Role = x.Role,
+                    Cart = new CartVM()
+                    {
+                        Id = x.Cart.Id,
+                        UserId = x.Id,
+                        Products = x.Cart.Products
+                    }
+                }).OrderByDescending(x => x.Role).ToListAsync();
             }
             else if (!descendingOrder && filterType == UserFilterType.Role)
             {
-                return users.OrderBy(x => x.Role);
+                return await _context.Users.Select(x => new UserVM()
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Email = x.Email,
+                    DateAdded = x.DateAdded,
+                    DateModified = x.DateModified,
+                    Role = x.Role,
+                    Cart = new CartVM()
+                    {
+                        Id = x.Cart.Id,
+                        UserId = x.Id,
+                        Products = x.Cart.Products
+                    }
+                }).OrderBy(x => x.Role).ToListAsync();
             }
 
-            return users;
+            throw new BadRequestException("Something is not rigth!");
         }
 
         public async Task<IEnumerable<UserVM>> Get(string name)
         {
             var _users = await _context.Users
                 .Select(x => x)
+                .Include(z => z.Cart)
                 .Where(y => y.Name == name)
                 .ToListAsync();
 
@@ -159,6 +215,40 @@ namespace BakeryAPI.Repositories
             return users;
         }
 
+        public async Task RemoveProductFromCart(int productId, int userId)
+        {
+            var currentUser = await _context.Users
+                .Include(x => x.Cart)
+                .Include(y => y.Cart.Products)
+                .FirstOrDefaultAsync(x => x.Id == userId);
+
+            if (currentUser != null)
+            {
+                var product = currentUser.Cart.Products
+                    .FirstOrDefault(x => x.Id == productId);
+
+                if (product != null)
+                {
+                    _context.Users
+                        .Include(x => x.Cart)
+                        .FirstOrDefault(x => x.Id == userId)
+                        .Cart
+                        .Products
+                        .Remove(product);
+
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    throw new BadRequestException("Non-existent product in user's cart.");
+                }
+            }
+            else
+            {
+                throw new BadRequestException("Non-existent user.");
+            }
+        }
+
         public async Task<UserVM> Update(int id, UserRegisterVM user)
         {
             var currentUser = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
@@ -171,6 +261,8 @@ namespace BakeryAPI.Repositories
                 var currentUserCart = currentUser.Cart;
 
                 await Delete(id);
+
+                await _context.SaveChangesAsync();
 
                 await _accountRepository.Register(user);
 

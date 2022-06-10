@@ -66,6 +66,7 @@ namespace BakeryAPI
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddScoped<IValidator<UserRegisterVM>, UserRegisterVMValidator>();
+            services.AddScoped<IValidator<Product>, ProductValidator>();
 
             services.AddControllers().AddFluentValidation();
 
