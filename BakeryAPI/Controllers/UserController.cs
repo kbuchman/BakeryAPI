@@ -13,7 +13,7 @@ namespace BakeryAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Administrator")]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
@@ -24,13 +24,14 @@ namespace BakeryAPI.Controllers
         }
 
         [HttpGet("get-all")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IEnumerable<UserVM>> Get()
         {
             return await _userRepository.Get();
         }
 
         [HttpGet("get/{id}")]
-        [Authorize(Roles = "Client")]
+        [Authorize(Roles = "Client,Administrator")]
         public async Task<UserVM> Get(int id)
         {
             return await _userRepository.Get(id);
@@ -43,12 +44,14 @@ namespace BakeryAPI.Controllers
         }
 
         [HttpGet("get-by-name/{name}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IEnumerable<UserVM>> Get(string name)
         {
             return await _userRepository.Get(name);
         }
 
         [HttpDelete("delete-all")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult> Delete()
         {
             if (Get() == null)
@@ -61,6 +64,7 @@ namespace BakeryAPI.Controllers
         }
 
         [HttpDelete("delete/{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult> Delete(int id)
         {
             if (Get(id) == null)
@@ -72,6 +76,7 @@ namespace BakeryAPI.Controllers
         }
 
         [HttpPut("update/{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<UserVM>> Update(int id, [FromBody] UserRegisterVM user)
         {
             if (Get(id) == null)
@@ -82,7 +87,7 @@ namespace BakeryAPI.Controllers
         }
 
         [HttpPost("add-product-to-cart/{productId}/{userId}")]
-        [Authorize(Roles = "Client")]
+        [Authorize(Roles = "Client,Administrator")]
         public async Task<Product> AddProductToCart(int productId, int userId)
         {
             return await _userRepository.AddProductToCart(productId, userId);

@@ -106,8 +106,8 @@ namespace BakeryAPI.Repositories
                 EF.Functions.Like(x.Name.ToLower(), _phrase)
                 || EF.Functions.Like(x.Type.ToLower(), _phrase)
                 || EF.Functions.Like(x.Description.ToLower(), _phrase)
-                || x.Price == Int32.Parse(phrase)
-                || x.Quantity == Int32.Parse(phrase)
+                /*|| x.Price == Int32.Parse(phrase)
+                || x.Quantity == Int32.Parse(phrase)*/
                 ).ToListAsync();
 
             return _products;
