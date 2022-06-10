@@ -31,7 +31,6 @@ namespace BakeryAPI.Controllers
         }
 
         [HttpGet("get/{id}")]
-        [Authorize(Roles = "Client,Administrator")]
         public async Task<UserVM> Get(int id)
         {
             return await _userRepository.Get(id);
@@ -86,12 +85,16 @@ namespace BakeryAPI.Controllers
             return await _userRepository.Update(id, user);
         }
 
-        [HttpPost("add-product-to-cart/{productId}/{userId}")]
-        [Authorize(Roles = "Client,Administrator")]
+        [HttpPost("add-product-to-cart/{productId}/{userId}")]]
         public async Task<Product> AddProductToCart(int productId, int userId)
         {
             return await _userRepository.AddProductToCart(productId, userId);
         }
-        
+
+        [HttpPut("remove-product-from-cart/{productId}/{userId}")]
+        public async Task RemoveProductFromCart(int productId, int userId)
+        {
+            await _userRepository.RemoveProductFromCart(productId, userId);
+        }
     }
 }

@@ -43,6 +43,7 @@ namespace BakeryAPI.Controllers
         }
 
         [HttpGet("get-any-with/{phrase}")]
+        [AllowAnonymous]
         public async Task<IEnumerable<Product>> Get(string phrase)
         {
             return await _productRepository.Get(phrase);  

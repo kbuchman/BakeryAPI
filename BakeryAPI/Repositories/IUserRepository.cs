@@ -20,6 +20,7 @@ namespace BakeryAPI.Repositories
         Task<IEnumerable<UserVM>> Get(UserFilterType filterType, bool descendingOrder);
         Task<IEnumerable<UserVM>> Get(string name);
         Task<Product> AddProductToCart(int productId, int userId);
+        Task RemoveProductFromCart(int productId, int userId);
         Task<UserVM> Update(int id, UserRegisterVM user);
         Task Delete();
         Task Delete(int id);

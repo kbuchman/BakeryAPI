@@ -215,6 +215,40 @@ namespace BakeryAPI.Repositories
             return users;
         }
 
+        public async Task RemoveProductFromCart(int productId, int userId)
+        {
+            var currentUser = await _context.Users
+                .Include(x => x.Cart)
+                .Include(y => y.Cart.Products)
+                .FirstOrDefaultAsync(x => x.Id == userId);
+
+            if (currentUser != null)
+            {
+                var product = currentUser.Cart.Products
+                    .FirstOrDefault(x => x.Id == productId);
+
+                if (product != null)
+                {
+                    _context.Users
+                        .Include(x => x.Cart)
+                        .FirstOrDefault(x => x.Id == userId)
+                        .Cart
+                        .Products
+                        .Remove(product);
+
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    throw new BadRequestException("Non-existent product in user's cart.");
+                }
+            }
+            else
+            {
+                throw new BadRequestException("Non-existent user.");
+            }
+        }
+
         public async Task<UserVM> Update(int id, UserRegisterVM user)
         {
             var currentUser = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
